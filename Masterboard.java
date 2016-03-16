@@ -1,4 +1,3 @@
-import javax.swing.JOptionPane;
 
 public class Masterboard {
 	public SmallBoard[] sboards = new SmallBoard[9];
@@ -50,7 +49,54 @@ public class Masterboard {
 	{
 		String border = "\n-------------------------\n";
 		board = getTopRow() + border + getMidRow() + border + getBotRow();
-		//JOptionPane.showMessageDialog(null, board);
 		System.out.println(board);
+	}
+	
+	public boolean checkWin()
+	{
+		boolean didWin = false;
+		if (checkRow() || checkColumn() || checkDiag())
+			didWin = true;
+		return didWin;
+			
+	}
+	
+	public boolean checkRow()
+	{
+		boolean didWin = false;
+		if(sboards[0].checkWin() && sboards[1].checkWin() && sboards[2].checkWin())
+			didWin = true;
+		
+		if(sboards[3].checkWin() && sboards[4].checkWin() && sboards[5].checkWin())
+			didWin = true;
+		
+		if(sboards[6].checkWin() && sboards[7].checkWin() && sboards[8].checkWin())
+			didWin = true;
+		return didWin;
+	}
+	
+	public boolean checkColumn()
+	{
+		boolean didWin = false;
+		if(sboards[0].checkWin() && sboards[3].checkWin() && sboards[6].checkWin())
+			didWin = true;
+		
+		if(sboards[1].checkWin() && sboards[4].checkWin() && sboards[7].checkWin())
+			didWin = true;
+		
+		if(sboards[2].checkWin() && sboards[5].checkWin() && sboards[8].checkWin())
+			didWin = true;
+		return didWin;
+	}
+	
+	public boolean checkDiag()
+	{
+		boolean didWin = false;
+		if(sboards[0].checkWin() && sboards[4].checkWin() && sboards[8].checkWin())
+			didWin = true;
+		
+		if(sboards[2].checkWin() && sboards[4].checkWin() && sboards[6].checkWin())
+			didWin = true;
+		return didWin;
 	}
 }
