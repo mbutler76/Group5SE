@@ -1,3 +1,4 @@
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import java.util.Scanner;
 
@@ -15,7 +16,7 @@ public class GameController {
 	private void printGame()
 	{
 		System.out.println("\n\n\n\n");
-		mboard.printBoard();
+		//mboard.printBoard();
 	}
 	
 	private void choiceTurn()
@@ -118,6 +119,7 @@ public class GameController {
 	
 	public static void main(String[] args)
 	{
+		View view = new View();
 		GameController game = new GameController();
 		game.run();
 	}
