@@ -16,6 +16,15 @@ public class PlayerInfo {
 	public int friendList[] = new int[MAXFRIENDS]; //Friendlist stored as Player ID's
 	//public Record record; //Players current Record
 	
+	private static final int MAX_LEVEL = 100; //Maximum level that a player can obtain
+	private int currentXP; //Current amount of XP that the player has
+	private int currentLevel; //Current player level
+	private int xpNeeded; //Amount of XP needed for the player to advance to the next level
+	
+	private int wins = 0; //Number of wins
+	private int losses = 0; //Number of losses
+	private int draws = 0; //Number of draws/ties
+	
 	/*Getters and Setters*/
 	public int getPlayerID(){
 		return playerID;
@@ -46,28 +55,6 @@ public class PlayerInfo {
 		username = newName;
 	}
 	
-	//public Level level; //Current level
-	/*Display Level*/
-    /*public int displayLevel(){
-		return level.currentLevel;
-	}*/
-	
-	/*Display XP needed to level*/
-	/*public int displayXPNeeded(){
-		return level.xpNeeded;
-	}*/
-	
-	/*Display Current XP*/
-	/*public int displayCurrentXP(){
-		return level.currentXP;
-	}*/
-	
-	/*Matchmaking method*/
-	/*public void findGame(){
-		
-		numCurrentGames++;
-	}*/
-	
 	@Override
 	public String toString(){
 		return username + " #" + playerID;
@@ -87,5 +74,65 @@ public class PlayerInfo {
 		}
 	}
 	
+	//generates the amount of xp needed to level up based on what level the player is currently at
+	private int generateXP(int i)
+	{
+		return (25 * i) + 25;
+	}
+		
+	//checks what level the player is currently at and calculates how much XP they need to level up
+	public int getXpNeeded()
+	{
+		xpNeeded = generateXP(currentLevel) - currentXP;
+		return xpNeeded;
+	}
+		
+	//checks to see if the player meets all of the criteria to level up to the next level
+	public boolean checkLevelUp()
+	{
+		if (currentLevel < MAX_LEVEL && currentXP > xpNeeded)
+		{
+			currentXP = currentXP - xpNeeded;
+			currentLevel++;
+			return true;
+		}
+		else 
+		{
+			return false;
+		}
+	}
+		
+	//getter for the player's current XP
+	public int getCurrentXP()
+	{
+		return currentXP;
+	}
+
+	//getter for the player's current level
+	int getCurrentLevel()
+	{
+		return currentLevel;
+	}
 	
+	public void updateWins()
+	{
+		wins++;
+	}
+	
+	public void updateLosses()
+	{
+		losses++;
+	}
+	
+	public void updateDraws()
+	{
+		draws++;
+	}
+	
+	public String displayRecord()
+	{
+		String rec = "Wins: " + wins +"\nLosses: " + losses + "\nDraws: " + draws;
+		
+		return rec;
+	}
 }
