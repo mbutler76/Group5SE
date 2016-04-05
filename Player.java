@@ -1,91 +1,78 @@
-import java.awt.Image;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 
-public class Player {
+public class Player 
+{
+	private char mark;
+	private Player opponent;
+	//Do we want to use this guy's method of using input/output streams for communicating with the client?
+	private Socket socket;
+	private BufferedReader input;
+	private PrintWriter output;
+	
+	public Player(Socket s, char m)
+	{
+		this.socket = s;
+		this.mark = m;
+		try {
+            input = new BufferedReader(
+                new InputStreamReader(socket.getInputStream()));
+            output = new PrintWriter(socket.getOutputStream(), true);
+            output.println("WELCOME " + mark);
+            output.println("MESSAGE Waiting for opponent to connect");
+        } catch (IOException e) {
+            System.out.println("Player died: " + e);
+        }
+	}
+	
+	public void setOpponent(Player o)
+	{
+		this.opponent = o;
+	}
+	
+	public void otherPlayerMoved(int location) {
+        output.println("OPPONENT_MOVED " + location);
+        output.println(
+            hasWinner() ? "DEFEAT" : boardFilledUp() ? "TIE" : "");
+    }
 
-	public String username; //Displayed to everyone
-	private int playerID; //Used for matchmaking and adding friends
-	private String email; 
-	private String password;
-	public Image avatar; //Image displayed for each account
-	
-	public int maxGames = 10; //Maximum number of games playable at once
-	public int numCurrentGames; //Number of games currently being played
-	public int numMovesToMake; //Number of games that have a move to be made
-	private static final int MAXFRIENDS = 100; //Maximum number of friends
-	private int numFriends = 0; //Current number of friends
-	public int friendList[] = new int[MAXFRIENDS]; //Friendlist stored as Player ID's
-	//public Record record; //Players current Record
-	
-	/*Getters and Setters*/
-	public int getPlayerID(){
-		return playerID;
-	}
-	
-	public void setPlayerID(int id){
-		playerID = id;
-	}
-	
-	public String getEmail(){
-		return email;
-	}
-	
-	public void setEmail(String em){
-		email = em;
-	}
-	
-	public String getPassword(){
-		return password;
-	}
-	
-	public void setPassword(String pw){
-		password = pw;
-	}
-	
-	/*Changes player's username*/
-	public void changeUsername(String newName){
-		username = newName;
-	}
-	
-	//public Level level; //Current level
-	/*Display Level*/
-    /*public int displayLevel(){
-		return level.currentLevel;
-	}*/
-	
-	/*Display XP needed to level*/
-	/*public int displayXPNeeded(){
-		return level.xpNeeded;
-	}*/
-	
-	/*Display Current XP*/
-	/*public int displayCurrentXP(){
-		return level.currentXP;
-	}*/
-	
-	/*Matchmaking method*/
-	/*public void findGame(){
-		
-		numCurrentGames++;
-	}*/
-	
-	@Override
-	public String toString(){
-		return username + " #" + playerID;
-	}
-	
-	public void howManyMoves(int n){
-		n = numMovesToMake;
-		System.out.println("You have " + n + " move to make");
-	}
-	
-	/*Add friend*/
-	public void addFriend(int id){
-		if(numFriends < MAXFRIENDS)
-		{
-			friendList[numFriends] = id;
-			numFriends++;
-		}
-	}
-	
-	
+    /**
+     * The run method of this thread.
+     */
+    public void run() {
+        try {
+            // The thread is only started after everyone connects.
+            output.println("MESSAGE All players connected");
+
+            // Tell the first player that it is her turn.
+            if (mark == 'X') {
+                output.println("MESSAGE Your move");
+            }
+
+            // Repeatedly get commands from the client and process them.
+            while (true) {
+                String command = input.readLine();
+                if (command.startsWith("MOVE")) {
+                    int location = Integer.parseInt(command.substring(5));
+                    if (legalMove(location, this)) {
+                        output.println("VALID_MOVE");
+                        output.println(hasWinner() ? "VICTORY"
+                                     : boardFilledUp() ? "TIE"
+                                     : "");
+                    } else {
+                        output.println("MESSAGE ?");
+                    }
+                } else if (command.startsWith("QUIT")) {
+                    return;
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Player died: " + e);
+        } finally {
+            try {socket.close();} catch (IOException e) {}
+        }
+    }
 }
