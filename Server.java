@@ -6,38 +6,17 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-/**
- * A server for a network multi-player tic tac toe game.  Modified and
- * extended from the class presented in Deitel and Deitel "Java How to
- * Program" book.  I made a bunch of enhancements and rewrote large sections
- * of the code.  The main change is instead of passing *data* between the
- * client and server, I made a TTTP (tic tac toe protocol) which is totally
- * plain text, so you can test the game with Telnet (always a good idea.)
- * The strings that are sent in TTTP are:
- *
- *  Client -> Server           Server -> Client
- *  ----------------           ----------------
- *  MOVE <n>  (0 <= n <= 8)    WELCOME <char>  (char in {X, O})
- *  QUIT                       VALID_MOVE
- *                             OTHER_PLAYER_MOVED <n>
- *                             VICTORY
- *                             DEFEAT
- *                             TIE
- *                             MESSAGE <text>
- *
- * A second change is that it allows an unlimited number of pairs of
- * players to play.
- */
-public class Server {
 
-    /**
-     * Runs the application. Pairs up clients that connect.
-     */
-    public static void main(String[] args) throws Exception {
+public class Server
+{
+    public static void main(String[] args) throws Exception
+    {
         ServerSocket listener = new ServerSocket(8901);
         System.out.println("Tic Tac Toe Server is Running");
-        try {
-            while (true) {
+        try
+        {
+            while (true)
+            {
                 Game game = new Game();
                 Game.Player playerX = game.new Player(listener.accept(), 'X');
                 Game.Player playerO = game.new Player(listener.accept(), 'O');
@@ -47,171 +26,434 @@ public class Server {
                 playerX.start();
                 playerO.start();
             }
-        } finally {
+        }
+        finally
+        {
             listener.close();
         }
     }
 }
 
-/**
- * A two-player game.
- */
-class Game {
+class Game
+{
+    private Player[] board =
+        {
+        null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null
+        };
 
-    /**
-     * A board has nine squares.  Each square is either unowned or
-     * it is owned by a player.  So we use a simple array of player
-     * references.  If null, the corresponding square is unowned,
-     * otherwise the array cell stores a reference to the player that
-     * owns it.
-     */
-    private Player[] board = {
-        null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null};
-
-    /**
-     * The current player.
-     */
-    Player currentPlayer;
-
-    /**
-     * Returns whether the current state of the board is such that one
-     * of the players is a winner.
-     */
-    public boolean hasWinner() {
-        return
-            (board[0] != null && board[0] == board[1] && board[0] == board[2])
-          ||(board[3] != null && board[3] == board[4] && board[3] == board[5])
-          ||(board[6] != null && board[6] == board[7] && board[6] == board[8])
-          ||(board[0] != null && board[0] == board[3] && board[0] == board[6])
-          ||(board[1] != null && board[1] == board[4] && board[1] == board[7])
-          ||(board[2] != null && board[2] == board[5] && board[2] == board[8])
-          ||(board[0] != null && board[0] == board[4] && board[0] == board[8])
-          ||(board[2] != null && board[2] == board[4] && board[2] == board[6]);
+    public Player currentPlayer;
+    private SmallBoard[] sBoards = new SmallBoard[9];
+    
+    public Game()
+    {
+        for(int i = 0; i < 9; i++)
+        {
+            sBoards[i] = new SmallBoard(i);
+        }
     }
-
-    /**
-     * Returns whether there are no more empty squares.
-     */
-    public boolean boardFilledUp() {
-        for (int i = 0; i < board.length; i++) {
-            if (board[i] == null) {
+    
+    public boolean bigHasWinner()
+    {
+        for(int i = 0; i < 9; i++)
+        {
+            sBoards[i].update();
+        }
+        Player s0Winner = sBoards[0].smallWinner();
+        Player s1Winner = sBoards[1].smallWinner();
+        Player s2Winner = sBoards[2].smallWinner();
+        Player s3Winner = sBoards[3].smallWinner();
+        Player s4Winner = sBoards[4].smallWinner();
+        Player s5Winner = sBoards[5].smallWinner();
+        Player s6Winner = sBoards[6].smallWinner();
+        Player s7Winner = sBoards[7].smallWinner();
+        Player s8Winner = sBoards[8].smallWinner();
+        if (s0Winner != null && s0Winner == s1Winner && s0Winner == s2Winner)
+            {return true;}
+        else if (s0Winner != null && s0Winner == s3Winner && s0Winner == s6Winner)
+            {return true;}
+        else if (s0Winner != null && s0Winner == s4Winner && s0Winner == s8Winner)
+            {return true;}
+        else if (s1Winner != null && s1Winner == s4Winner && s1Winner == s7Winner)
+            {return true;}
+        else if (s2Winner != null && s2Winner == s5Winner && s2Winner == s8Winner)
+            {return true;}
+        else if (s2Winner != null && s2Winner == s4Winner && s2Winner == s6Winner)
+            {return true;}
+        else if (s3Winner != null && s3Winner == s4Winner && s3Winner == s5Winner)
+            {return true;}
+        else if (s6Winner != null && s6Winner == s7Winner && s6Winner == s8Winner)
+            {return true;}
+        else return false;
+    }
+    
+    public boolean boardFilledUp()
+    {
+        for (int i = 0; i < board.length; i++)
+        {
+            if (board[i] == null)
+            {
                 return false;
             }
         }
         return true;
     }
 
-    /**
-     * Called by the player threads when a player tries to make a
-     * move.  This method checks to see if the move is legal: that
-     * is, the player requesting the move must be the current player
-     * and the square in which she is trying to move must not already
-     * be occupied.  If the move is legal the game state is updated
-     * (the square is set and the next player becomes current) and
-     * the other player is notified of the move so it can update its
-     * client.
-     */
-    public synchronized boolean legalMove(int location, Player player) {
-        if (player == currentPlayer && board[location] == null) {
+    public synchronized boolean legalMove(int location, Player player)
+    {
+        if (player == currentPlayer && board[location] == null && sBoards[this.getBoardNumber(location)].getPlayable())
+        {
             board[location] = currentPlayer;
             currentPlayer = currentPlayer.opponent;
             currentPlayer.otherPlayerMoved(location);
+            this.changePlayable(this.getDestBoard(location));
+            //System.out.println("Dest board is " + this.getDestBoard(location));
             return true;
         }
         return false;
     }
-
-    /**
-     * The class for the helper threads in this multithreaded server
-     * application.  A Player is identified by a character mark
-     * which is either 'X' or 'O'.  For communication with the
-     * client the player has a socket with its input and output
-     * streams.  Since only text is being communicated we use a
-     * reader and a writer.
-     */
-    class Player extends Thread {
-        char mark;
+    
+    public void changePlayable(int destBoard)
+        {
+            if (sBoards[destBoard].smallHasWinner())
+            {
+                for(int i = 0; i < 9; i++)
+                {
+                    sBoards[i].setPlayable(true);
+                }
+            }
+            else
+            {
+                for(int i = 0; i < 9; i++)
+                {
+                    if (i != destBoard)
+                        sBoards[i].setPlayable(false);
+                    else
+                        sBoards[i].setPlayable(true);
+                }
+            }            
+        }
+    
+    public int getBoardNumber(int num)
+    {
+        if (num < 27)
+        {
+            if (num < 3 || (num < 12 && num > 8) || (num < 21 && num > 17))
+                return 0;
+            else if ((num > 5 && num < 9) || (num > 14 && num < 18) || num > 23)
+                return 2;
+            else
+                return 1;
+        }
+        else if (num > 53)
+        {
+            if (num < 57 || (num > 62 && num < 66) || (num > 71 && num < 75))
+                return 6;
+            else if ((num > 59 && num < 63) || (num > 68 && num < 72) || num > 77)
+                return 8;
+            else
+                return 7;
+        }
+        else
+        {
+            if (num < 30 || (num > 35 && num < 39) || (num > 44 && num < 48))
+                return 3;
+            else if ((num > 32 && num < 36) || (num > 41 && num < 45) || num > 50)
+                return 5;
+            else
+                return 4;
+        }
+    }
+    
+    public int getDestBoard(int num)
+    {
+        if (num == 0 || num == 3 || num == 6 || num == 27 || num == 30 || num == 33 || num == 54 || num == 57 || num == 60)
+            return 0;
+        else if (num == 1 || num == 4 || num == 7 || num == 28 || num == 31 || num == 34 || num == 55 || num == 58 || num == 61)
+            return 1;
+        else if (num == 2 || num == 5 || num == 8 || num == 29 || num == 32 || num == 35 || num == 56 || num == 59 || num == 62)
+            return 2;
+        else if (num == 9 || num == 12 || num == 15 || num == 36 || num == 39 || num == 42 || num == 63 || num == 66 || num == 69)
+            return 3;
+        else if (num == 10 || num == 13 || num == 16 || num == 37 || num == 40 || num == 43 || num == 64 || num == 67 || num == 70)
+            return 4;
+        else if (num == 11 || num == 14 || num == 17 || num == 38 || num == 41|| num == 44 || num == 65 || num == 68 || num == 71)
+            return 5;
+        else if (num == 18 || num == 21 || num == 24 || num == 45 || num == 48 || num == 51 || num == 72 || num == 75 || num == 78)
+            return 6;
+        else if (num == 19 || num == 22 || num == 25 || num == 46 || num == 49 || num == 52 || num == 73 || num == 76 || num == 79)
+            return 7;
+        else
+            return 8;
+    }
+    
+    class SmallBoard
+    {
+        private Player[] sBoard = 
+        {
+            null, null, null,
+            null, null, null,
+            null, null, null
+        };
+        private int boardNumber;
+        private boolean playable = true;
+        
+        public void setPlayable(boolean bool)
+        {
+            playable = bool;
+        }
+        
+        public boolean getPlayable()
+        {
+            return playable;
+        }
+                
+        public SmallBoard(int bn)
+        {
+            boardNumber = bn;
+        }
+        
+        public void setBig(Player smallWinner)
+        {
+            if (boardNumber < 3)
+            {
+                board[boardNumber * 3] = smallWinner; board[boardNumber * 3 + 1] = smallWinner; board[boardNumber * 3 + 2] = smallWinner;
+                board[boardNumber * 3 + 9] = smallWinner; board[boardNumber * 3 + 10] = smallWinner; board[boardNumber * 3 + 11] = smallWinner;
+                board[boardNumber * 3 + 18] = smallWinner; board[boardNumber * 3 + 19] = smallWinner; board[boardNumber * 3 + 20] = smallWinner;
+            }
+            else if (boardNumber == 3 || boardNumber == 6)
+            {
+                board[boardNumber * 9] = smallWinner; board[boardNumber * 9 + 1] = smallWinner; board[boardNumber * 9 + 2] = smallWinner;
+                board[boardNumber * 9 + 9] = smallWinner; board[boardNumber * 9 + 10] = smallWinner; board[boardNumber * 9 + 11] = smallWinner;
+                board[boardNumber * 9 + 18] = smallWinner; board[boardNumber * 9 + 19] = smallWinner; board[boardNumber * 9 + 20] = smallWinner;
+            }
+            else if (boardNumber == 4 || boardNumber == 7)
+            {
+                board[boardNumber * 9 - 6] = smallWinner; board[boardNumber * 9 - 5] = smallWinner; board[boardNumber * 9 - 4] = smallWinner;
+                board[boardNumber * 9 + 3] = smallWinner; board[boardNumber * 9 + 4] = smallWinner; board[boardNumber * 9 + 5] = smallWinner;
+                board[boardNumber * 9 + 12] = smallWinner; board[boardNumber * 9 + 13] = smallWinner; board[boardNumber * 9 + 14] = smallWinner;
+            }
+            else if (boardNumber == 5)
+            {
+                board[boardNumber * 6 + 3] = smallWinner; board[boardNumber * 6 + 4] = smallWinner; board[boardNumber * 6 + 5] = smallWinner;
+                board[boardNumber * 9 - 3] = smallWinner; board[boardNumber * 9 - 2] = smallWinner; board[boardNumber * 9 - 1] = smallWinner;
+                board[boardNumber * 9 + 6] = smallWinner; board[boardNumber * 9 + 7] = smallWinner; board[boardNumber * 9 + 8] = smallWinner;
+            }
+            else
+            {
+                board[boardNumber * 9 - 12] = smallWinner; board[boardNumber * 9 - 11] = smallWinner; board[boardNumber * 9 - 10] = smallWinner;
+                board[boardNumber * 9 - 3] = smallWinner; board[boardNumber * 9 - 2] = smallWinner; board[boardNumber * 9 - 1] = smallWinner;
+                board[boardNumber * 9 + 6] = smallWinner; board[boardNumber * 9 + 7] = smallWinner; board[boardNumber * 9 + 8] = smallWinner;
+            }
+        }
+        
+        public void update()
+        {
+            if (boardNumber < 3)
+            {
+                sBoard[0] = board[boardNumber * 3]; sBoard[1] = board[boardNumber * 3 + 1];  sBoard[2] = board[boardNumber * 3 + 2];
+                sBoard[3] = board[boardNumber * 3 + 9]; sBoard[4] = board[boardNumber * 3 + 10];  sBoard[5] = board[boardNumber * 3 + 11];
+                sBoard[6] = board[boardNumber * 3 + 18]; sBoard[7] = board[boardNumber * 3 + 19];  sBoard[8] = board[boardNumber * 3 + 20];
+            }
+            else if (boardNumber == 3 || boardNumber == 6)
+            {
+                sBoard[0] = board[boardNumber * 9]; sBoard[1] = board[boardNumber * 9 + 1];  sBoard[2] = board[boardNumber * 9 + 2];
+                sBoard[3] = board[boardNumber * 9 + 9]; sBoard[4] = board[boardNumber * 9 + 10];  sBoard[5] = board[boardNumber * 9 + 11];
+                sBoard[6] = board[boardNumber * 9 + 18]; sBoard[7] = board[boardNumber * 9 + 19];  sBoard[8] = board[boardNumber * 9 + 20];
+            }
+            else if (boardNumber == 4 || boardNumber == 7)
+            {
+                sBoard[0] = board[boardNumber * 9 - 6]; sBoard[1] = board[boardNumber * 9 - 5];  sBoard[2] = board[boardNumber * 9 - 4];
+                sBoard[3] = board[boardNumber * 9 + 3]; sBoard[4] = board[boardNumber * 9 + 4];  sBoard[5] = board[boardNumber * 9 + 5];
+                sBoard[6] = board[boardNumber * 9 + 12]; sBoard[7] = board[boardNumber * 9 + 13];  sBoard[8] = board[boardNumber * 9 + 14];
+            }
+            else if (boardNumber == 5)
+            {
+                sBoard[0] = board[boardNumber * 6 + 3]; sBoard[1] = board[boardNumber * 6 + 4];  sBoard[2] = board[boardNumber * 6 + 5];
+                sBoard[3] = board[boardNumber * 9 - 3]; sBoard[4] = board[boardNumber * 9 - 2];  sBoard[5] = board[boardNumber * 9 - 1];
+                sBoard[6] = board[boardNumber * 9 + 6]; sBoard[7] = board[boardNumber * 9 + 7];  sBoard[8] = board[boardNumber * 9 + 8];
+            }
+            else
+            {
+                sBoard[0] = board[boardNumber * 9 - 12]; sBoard[1] = board[boardNumber * 9 - 11];  sBoard[2] = board[boardNumber * 9 - 10];
+                sBoard[3] = board[boardNumber * 9 - 3]; sBoard[4] = board[boardNumber * 9 - 2];  sBoard[5] = board[boardNumber * 9 - 1];
+                sBoard[6] = board[boardNumber * 9 + 6]; sBoard[7] = board[boardNumber * 9 + 7];  sBoard[8] = board[boardNumber * 9 + 8];
+            }
+        }
+        
+        public Player smallWinner()
+        {
+            if (sBoard[0] != null && sBoard[0] == sBoard[1] && sBoard[0] == sBoard[2])
+                {
+                    
+                    this.setBig(sBoard[0]);
+                    return sBoard[0];
+                }
+            else if (sBoard[3] != null && sBoard[3] == sBoard[4] && sBoard[3] == sBoard[5])
+                {
+                    this.setBig(sBoard[3]);
+                    return sBoard[3];
+                }
+            else if (sBoard[6] != null && sBoard[6] == sBoard[7] && sBoard[6] == sBoard[8])
+                {
+                    this.setBig(sBoard[6]);
+                    return sBoard[6];
+                }
+            else if (sBoard[0] != null && sBoard[0] == sBoard[3] && sBoard[0] == sBoard[6])
+                {
+                    this.setBig(sBoard[0]);
+                    return sBoard[0];
+                }
+            else if (sBoard[1] != null && sBoard[1] == sBoard[4] && sBoard[1] == sBoard[7])
+                {
+                    this.setBig(sBoard[1]);
+                    return sBoard[1];
+                }
+            else if (sBoard[2] != null && sBoard[2] == sBoard[5] && sBoard[2] == sBoard[8])
+                {
+                    this.setBig(sBoard[2]);
+                    return sBoard[2];
+                }
+            else if (sBoard[0] != null && sBoard[0] == sBoard[4] && sBoard[0] == sBoard[8])
+                {
+                    this.setBig(sBoard[0]);
+                    return sBoard[0];
+                }
+            else if (sBoard[2] != null && sBoard[2] == sBoard[4] && sBoard[2] == sBoard[6])
+                {
+                    this.setBig(sBoard[2]);
+                    return sBoard[2];
+                }
+            else return null;
+        }
+        
+        public boolean smallHasWinner()
+        {
+            if (sBoard[0] != null && sBoard[0] == sBoard[1] && sBoard[0] == sBoard[2])
+                {
+                    return true;
+                }
+            else if (sBoard[3] != null && sBoard[3] == sBoard[4] && sBoard[3] == sBoard[5])
+                {
+                    this.setBig(sBoard[3]);
+                    return true;
+                }
+            else if (sBoard[6] != null && sBoard[6] == sBoard[7] && sBoard[6] == sBoard[8])
+                {
+                    this.setBig(sBoard[6]);
+                    return true;
+                }
+            else if (sBoard[0] != null && sBoard[0] == sBoard[3] && sBoard[0] == sBoard[6])
+                {
+                    return true;
+                }
+            else if (sBoard[1] != null && sBoard[1] == sBoard[4] && sBoard[1] == sBoard[7])
+                {
+                    return true;
+                }
+            else if (sBoard[2] != null && sBoard[2] == sBoard[5] && sBoard[2] == sBoard[8])
+                {
+                    return true;
+                }
+            else if (sBoard[0] != null && sBoard[0] == sBoard[4] && sBoard[0] == sBoard[8])
+                {
+                    return true;
+                }
+            else if (sBoard[2] != null && sBoard[2] == sBoard[4] && sBoard[2] == sBoard[6])
+                {
+                    return true;
+                }
+            else return false;
+        }
+    }
+    
+    class Player extends Thread
+    {
+        public char mark;
         Player opponent;
         Socket socket;
         BufferedReader input;
         PrintWriter output;
 
-        /**
-         * Constructs a handler thread for a given socket and mark
-         * initializes the stream fields, displays the first two
-         * welcoming messages.
-         */
-        public Player(Socket socket, char mark) {
+        
+        public Player(Socket socket, char mark)
+        {
             this.socket = socket;
             this.mark = mark;
-            try {
-                input = new BufferedReader(
-                    new InputStreamReader(socket.getInputStream()));
+            try
+            {
+                input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 output = new PrintWriter(socket.getOutputStream(), true);
                 output.println("WELCOME " + mark);
                 output.println("MESSAGE Waiting for opponent to connect");
-            } catch (IOException e) {
+            } catch (IOException e)
+            {
                 System.out.println("Player died: " + e);
             }
         }
 
-        /**
-         * Accepts notification of who the opponent is.
-         */
-        public void setOpponent(Player opponent) {
+        
+        public void setOpponent(Player opponent)
+        {
             this.opponent = opponent;
         }
 
-        /**
-         * Handles the otherPlayerMoved message.
-         */
-        public void otherPlayerMoved(int location) {
-            output.println("OPPONENT_MOVED " + location);
-            output.println(
-                hasWinner() ? "DEFEAT" : boardFilledUp() ? "TIE" : "");
+        
+        public void otherPlayerMoved(int location)
+        {
+            output.println("OPPONENT_MOVED " + location);            
+            output.println(bigHasWinner() ? "DEFEAT" : boardFilledUp() ? "TIE" : "");
         }
-
-        /**
-         * The run method of this thread.
-         */
-        public void run() {
-            try {
+        
+        public void run()
+        {
+            try
+            {
                 // The thread is only started after everyone connects.
                 output.println("MESSAGE All players connected");
 
-                // Tell the first player that it is her turn.
-                if (mark == 'X') {
+                // Tell the first player that it is their turn.
+                if (mark == 'X')
+                {
                     output.println("MESSAGE Your move");
                 }
 
-                // Repeatedly get commands from the client and process them.
-                while (true) {
+                // Get commands from the client and process them.
+                while (true)
+                {
                     String command = input.readLine();
-                    if (command.startsWith("MOVE")) {
+                    if (command.startsWith("MOVE"))
+                    {
                         int location = Integer.parseInt(command.substring(5));
-                        if (legalMove(location, this)) {
+                        //System.out.println("board number " + this.getBoardNumber(location));
+                        if (legalMove(location, this))
+                        {
                             output.println("VALID_MOVE");
-                            output.println(hasWinner() ? "VICTORY"
-                                         : boardFilledUp() ? "TIE"
-                                         : "");
-                        } else {
-                            output.println("MESSAGE ?");
+                            output.println(bigHasWinner() ? "VICTORY" : boardFilledUp() ? "TIE" : "");
+                        } else
+                        {
+                            output.println("MESSAGE dont be dumb");
                         }
-                    } else if (command.startsWith("QUIT")) {
+                    }
+                    else if (command.startsWith("QUIT"))
+                    {
                         return;
                     }
                 }
-            } catch (IOException e) {
+            }
+            catch (IOException e)
+            {
                 System.out.println("Player died: " + e);
-            } finally {
+            }
+            finally
+            {
                 try {socket.close();} catch (IOException e) {}
             }
         }
