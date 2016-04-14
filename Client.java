@@ -148,32 +148,41 @@ public class Client
         }
         
         //Color the boards
-        for(int i = 3; i < 6; i++)
-        {
-            board[i].setBackground(Color.gray);
-            board[i+9].setBackground(Color.gray);
-            board[i+18].setBackground(Color.gray);
-        }
-        for(int i = 27; i < 30; i++)
-        {
-            board[i].setBackground(Color.gray);
-            board[i+9].setBackground(Color.gray);
-            board[i+18].setBackground(Color.gray);
-        }
-        for(int i = 33; i < 36; i++)
-        {
-            board[i].setBackground(Color.gray);
-            board[i+9].setBackground(Color.gray);
-            board[i+18].setBackground(Color.gray);
-        }
-         for(int i = 57; i < 60; i++)
-         {
-            board[i].setBackground(Color.gray);
-            board[i+9].setBackground(Color.gray);
-            board[i+18].setBackground(Color.gray);
-        }
+        colorBoards();
         
         frame.getContentPane().add(smallBoardPanel, "Center");
+    }
+    
+    public void colorBoards()
+    {
+    	for(int i = 0; i < 81; i ++)
+    	{
+    		board[i].setBackground(Color.white);
+    	}
+    	 for(int i = 3; i < 6; i++)
+         {
+             board[i].setBackground(Color.gray);
+             board[i+9].setBackground(Color.gray);
+             board[i+18].setBackground(Color.gray);
+         }
+         for(int i = 27; i < 30; i++)
+         {
+             board[i].setBackground(Color.gray);
+             board[i+9].setBackground(Color.gray);
+             board[i+18].setBackground(Color.gray);
+         }
+         for(int i = 33; i < 36; i++)
+         {
+             board[i].setBackground(Color.gray);
+             board[i+9].setBackground(Color.gray);
+             board[i+18].setBackground(Color.gray);
+         }
+          for(int i = 57; i < 60; i++)
+          {
+             board[i].setBackground(Color.gray);
+             board[i+9].setBackground(Color.gray);
+             board[i+18].setBackground(Color.gray);
+         }
     }
 
     
@@ -204,6 +213,8 @@ public class Client
                     int loc = Integer.parseInt(response.substring(15));
                     board[loc].setIcon(opponentIcon);
                     board[loc].repaint();
+                    colorBoards();
+                    board[loc].setBackground(Color.yellow);
                     messageLabel.setText("Opponent moved, your turn");
                 }
                 else if (response.startsWith("VICTORY"))

@@ -409,7 +409,7 @@ class Game
         
         public void otherPlayerMoved(int location)
         {
-            output.println("OPPONENT_MOVED " + location);            
+            output.println("OPPONENT_MOVED " + location);  
             output.println(bigHasWinner() ? "DEFEAT" : boardFilledUp() ? "TIE" : "");
         }
         
