@@ -1,5 +1,7 @@
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
@@ -11,6 +13,9 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -21,6 +26,7 @@ public class Client
 {
 
     private JFrame frame = new JFrame("Tic Tac Toe");
+    private JMenuBar menuBar = new JMenuBar();
     private JLabel messageLabel = new JLabel("");
     private ImageIcon icon;
     private ImageIcon opponentIcon;
@@ -41,6 +47,38 @@ public class Client
         socket = new Socket(serverAddress, PORT);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream(), true);
+        
+        frame.setJMenuBar(menuBar);
+        JMenu file = new JMenu ("File");
+        menuBar.add(file);
+        JMenuItem newGame = new JMenuItem("New Game");
+        file.add(newGame);
+        JMenuItem tutorial = new JMenuItem("Tutorial");
+        file.add(tutorial);
+        JMenuItem exit = new JMenuItem("Exit");
+        file.add(exit);
+        
+        class newGameAction implements ActionListener {
+        	public void actionPerformed (ActionEvent e) {
+        		JOptionPane.showMessageDialog(null, "New Game!");
+        	}
+        } 
+        newGame.addActionListener(new newGameAction());
+        
+        class tutorialAction implements ActionListener {
+        	public void actionPerformed (ActionEvent e) {
+        		JOptionPane.showMessageDialog(null, "This is how you play!");
+        	}
+        }       
+        tutorial.addActionListener(new tutorialAction());
+        
+        class exitAction implements ActionListener {
+        	public void actionPerformed (ActionEvent e) {
+        		System.exit(0);
+        	}
+        }       
+        exit.addActionListener(new exitAction());
+
         
         //Login
         int reply = JOptionPane.showConfirmDialog(null, "Do you have an account?", "Account?", JOptionPane.YES_NO_OPTION);
