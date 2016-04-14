@@ -13,6 +13,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 
 public class Client
@@ -39,6 +41,56 @@ public class Client
         socket = new Socket(serverAddress, PORT);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream(), true);
+        
+        //Login
+        int reply = JOptionPane.showConfirmDialog(null, "Do you have an account?", "Account?", JOptionPane.YES_NO_OPTION);
+        if(reply == JOptionPane.YES_OPTION)
+        {
+        	JLabel jUserName = new JLabel("User Name");
+            JTextField userName = new JTextField();
+            JLabel jPassword = new JLabel("Password");
+            JTextField password = new JPasswordField();
+            Object[] ob = {jUserName, userName, jPassword, password};
+            int result = JOptionPane.showConfirmDialog(null, ob, "Login", JOptionPane.OK_CANCEL_OPTION);
+     
+            if (result == JOptionPane.OK_OPTION) {
+                String userNameValue = userName.getText();
+                out.println(userNameValue);
+                String passwordValue = password.getText();
+                out.println(passwordValue);
+            }
+        }
+        else
+        {
+        	String name = null, password = null, password2 = null;
+        	boolean match = false;
+        	while (!match)
+        	{
+        	JLabel jUserName = new JLabel("User Name");
+            JTextField userName = new JTextField();
+            JLabel jPassword = new JLabel("Password");
+            JTextField pw = new JPasswordField();
+            JLabel jPassword2 = new JLabel("Please confirm password");
+            JTextField pw2 = new JPasswordField();
+            Object[] ob = {jUserName, userName, jPassword, pw, jPassword2, pw2};
+            int result = JOptionPane.showConfirmDialog(null, ob, "Create Account", JOptionPane.OK_CANCEL_OPTION);
+        		
+            	if (result == JOptionPane.OK_OPTION) 
+        		{
+        			name = userName.getText();
+        			password = pw.getText();
+        			password2 = pw2.getText();
+        		}
+        		
+        		if (password.equals(password2))
+        			match = true;
+        		else
+        			JOptionPane.showMessageDialog(null, "Passwords did not match, please try again");
+        	}
+        	out.println(name);
+        	out.println(password);
+        	out.flush();
+        }
 
         // Layout GUI
         messageLabel.setBackground(Color.gray);
@@ -173,7 +225,7 @@ public class Client
     {
         while (true)
         {
-            String serverAddress = (args.length == 0) ? "localhost" : args[1];
+            String serverAddress = (args.length == 0) ? "localhost" : args[0];
             Client client = new Client(serverAddress);
             client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             client.frame.setSize(600, 400);

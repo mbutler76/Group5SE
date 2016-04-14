@@ -391,6 +391,8 @@ class Game
             {
                 input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 output = new PrintWriter(socket.getOutputStream(), true);
+                String username = input.readLine();
+                String password = input.readLine();
                 output.println("WELCOME " + mark);
                 output.println("MESSAGE Waiting for opponent to connect");
             } catch (IOException e)
