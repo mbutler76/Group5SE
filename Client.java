@@ -30,6 +30,7 @@ public class Client
     private JLabel messageLabel = new JLabel("");
     private ImageIcon icon;
     private ImageIcon opponentIcon;
+    private boolean ticTacToeplaying = true;
 
     private Square[] board = new Square[81];
     private Square currentSquare;
@@ -184,7 +185,58 @@ public class Client
              board[i+18].setBackground(Color.gray);
          }
     }
-
+    
+    public void ticTacToe()
+    {
+        JFrame ticTacToeFrame = new JFrame("Rock Paper Scisors");
+        ticTacToeFrame.setResizable(false);
+        ticTacToeFrame.setSize(200, 100);
+        ticTacToeFrame.setAlwaysOnTop(true);
+        ImageIcon rock = new ImageIcon("rock.png");
+        ImageIcon paper = new ImageIcon("paper.png");
+        ImageIcon scissors = new ImageIcon("scissors.png");
+        Square[] choices = new Square[3];
+        
+        
+        JPanel choicePanel = new JPanel();
+            choicePanel.setBackground(Color.black);
+            choicePanel.setLayout(new GridLayout(1, 3, 10, 10));
+            for (int i = 0; i < 3; i++)
+            {
+                final int j = i;
+                choices[i] = new Square();
+                if (i == 0)
+                    choices[i].setIcon(rock);
+                else if (i == 1)
+                    choices[i].setIcon(paper);
+                else
+                    choices[i].setIcon(scissors);
+                choices[i].addMouseListener(new MouseAdapter()
+                {
+                    public void mousePressed(MouseEvent e)
+                    {
+                        currentSquare = choices[j];
+                        out.println("CHOICE " + j);
+                        ticTacToeFrame.dispose();
+                        changeTicTacToePlaying();
+                    }
+                });
+                choicePanel.add(choices[i]);
+            }
+            
+        ticTacToeFrame.getContentPane().add(choicePanel, "Center");
+        ticTacToeFrame.setVisible(true);
+    }
+    
+    public void changeTicTacToePlaying()
+    {
+        ticTacToeplaying = false;
+    }
+    
+    public boolean checkTicTacToePlaying()
+    {
+        return ticTacToeplaying;
+    }
     
     public void play() throws Exception
     {
@@ -272,6 +324,7 @@ public class Client
     
     public static void main(String[] args) throws Exception
     {
+        int num = 0;
         while (true)
         {
             String serverAddress = (args.length == 0) ? "localhost" : args[0];
@@ -280,6 +333,12 @@ public class Client
             client.frame.setSize(600, 400);
             client.frame.setVisible(true);
             client.frame.setResizable(false);
+            client.ticTacToe();
+            while(client.checkTicTacToePlaying())
+            {
+                client.frame.setFocusableWindowState(false);
+            }
+            client.frame.setFocusableWindowState(true);
             client.play();
             if (!client.wantsToPlayAgain())
             {

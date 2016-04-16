@@ -193,6 +193,11 @@ class Game
             return 8;
     }
     
+    public void setCurrentPlayer(Player player)
+    {
+        currentPlayer = player;
+    }
+    
     class SmallBoard
     {
         private Player[] sBoard = 
@@ -380,6 +385,7 @@ class Game
         Socket socket;
         BufferedReader input;
         PrintWriter output;
+        int choice = 3;
 
         
         public Player(Socket socket, char mark)
@@ -399,6 +405,35 @@ class Game
                 System.out.println("Player died: " + e);
             }
         }
+        
+        public int ticTacToe()
+        {
+            if (this.choice == 3 || opponent.choice == 3)
+            {
+                    return 0;
+            }
+            if (this.choice == 2)
+            {
+                if (opponent.choice == 2) {return 0;}
+                else if (opponent.choice == 0) {return 2;}
+                else {return 1;}			
+            }
+            else if (opponent.choice == 2)
+            {
+                if (this.choice == 2) {return 0;}
+                else if (this.choice == 0) {return 1;}
+                else {return 2;}			
+            }
+            else if (this.choice > opponent.choice)
+            {
+                return 1;
+            }
+            else if (opponent.choice > this.choice)
+            {
+                return 2;
+            }
+            else {return 0;}
+        }
 
         
         public void setOpponent(Player opponent)
@@ -409,19 +444,44 @@ class Game
         
         public void otherPlayerMoved(int location)
         {
-            output.println("OPPONENT_MOVED " + location);  
+            output.println("OPPONENT_MOVED " + location);            
             output.println(bigHasWinner() ? "DEFEAT" : boardFilledUp() ? "TIE" : "");
         }
         
         public void run()
         {
+            boolean ticTacToe = true;
+                       
             try
             {
                 // The thread is only started after everyone connects.
                 output.println("MESSAGE All players connected");
+                
+                String choiceCommand = input.readLine();
+                
+                while(ticTacToe)
+                {
+                    if (choiceCommand.startsWith("CHOICE"))
+                    {
+                        choice = Integer.parseInt(choiceCommand.substring(7));
+                        //System.out.println(mark + " " + choice);
+                    }
+                    
+                    if (ticTacToe() == 1)
+                    {
+                        setCurrentPlayer(this);
+                        ticTacToe = false;
+                    }
+                    else if (ticTacToe() == 2)
+                    {
+                        setCurrentPlayer(opponent);
+                        ticTacToe = false;
+                    }
+                                   
+                }
 
                 // Tell the first player that it is their turn.
-                if (mark == 'X')
+                if (mark == currentPlayer.mark)
                 {
                     output.println("MESSAGE Your move");
                 }
