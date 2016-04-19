@@ -49,6 +49,7 @@ public class Client
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream(), true);
         
+        //Menu
         frame.setJMenuBar(menuBar);
         JMenu file = new JMenu ("File");
         menuBar.add(file);
@@ -66,9 +67,35 @@ public class Client
         } 
         newGame.addActionListener(new newGameAction());
         
+        //Tutorial
         class tutorialAction implements ActionListener {
         	public void actionPerformed (ActionEvent e) {
-        		JOptionPane.showMessageDialog(null, "This is how you play!");
+        		JOptionPane.showMessageDialog(null, "Welcome to Ultimate Tic Tac Toe!");
+        		JOptionPane.showMessageDialog(null, "You have probably never played Tic Tac Toe quite like this. You will automatically be connected to another player.\nWhen the game starts you will play a short game of Rock Paper Scissors to decide who goes first. The player who wins Rock Paper Scissors gets to play first.\nThere are nine boards that are all connected in this version of Tic Tac Toe. The goal is to win 3 small boards in a row.\nThe first player gets to play in any of the 81 squares.");
+
+        		JFrame TutorialFrame = new JFrame("Tutorial");
+                TutorialFrame.setResizable(false);
+                TutorialFrame.setSize(600, 400);
+        		ImageIcon Pic1 = new ImageIcon("TutorialPic1.png");
+                ImageIcon Pic2 = new ImageIcon("TutorialPic2.png");
+                ImageIcon Pic3 = new ImageIcon("TutorialPic3.png");
+                Square Picture = new Square();
+                
+                JPanel tutorialPanel = new JPanel();
+                tutorialPanel.setBackground(Color.black);
+                tutorialPanel.setLayout(new GridLayout(1, 1, 600, 400));
+                Picture.setIcon(Pic1);
+                tutorialPanel.add(Picture);
+                    
+                TutorialFrame.getContentPane().add(tutorialPanel, "Center");
+                TutorialFrame.setVisible(true);
+                
+                JOptionPane.showMessageDialog(null, "This image shows the first move having been made. The square is yellow indicating that this is the most recent move made by the opponent.\nWhichever square that the move was made inside one of the small boards is the location of the next small board that must be played in.\nIn this case the next move will have to be played inside the first board in the middle row.\n");
+                Picture.setIcon(Pic2);
+                JOptionPane.showMessageDialog(null, "This image shows a few different things. The first being the Player X has won the middle board. This leaves that board unplayable now.\nNotice however, that the most recent move has been made in the center square of a small board. \nNormally, this would mean that the next move must be placed somewhere inside of the middle board.\nSince that board is won though, the next move can be played in any location that has not been played in yet.");
+                Picture.setIcon(Pic3);
+                JOptionPane.showMessageDialog(null, "This image shows simply how to win the game. Player X has won three small boards in a row and thus wins the overall game.\nPlease have fun and enjoy the game!");
+                TutorialFrame.dispose();
         	}
         }       
         tutorial.addActionListener(new tutorialAction());
