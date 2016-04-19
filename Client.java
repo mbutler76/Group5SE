@@ -186,7 +186,7 @@ public class Client
          }
     }
     
-    public void ticTacToe()
+    public void rockPaperScissors()
     {
         JFrame ticTacToeFrame = new JFrame("Rock Paper Scisors");
         ticTacToeFrame.setResizable(false);
@@ -254,7 +254,12 @@ public class Client
             while (true)
             {
                 response = in.readLine();
-                if (response.startsWith("VALID_MOVE"))
+                if (response.startsWith("CHOICE"))
+                {
+                    messageLabel.setText("rock paper scissors was a tie please play again");
+                    rockPaperScissors();
+                }
+                else if (response.startsWith("VALID_MOVE"))
                 {
                     messageLabel.setText("Valid move, please wait");
                     currentSquare.setIcon(icon);
@@ -333,7 +338,7 @@ public class Client
             client.frame.setSize(600, 400);
             client.frame.setVisible(true);
             client.frame.setResizable(false);
-            client.ticTacToe();
+            client.rockPaperScissors();
             while(client.checkTicTacToePlaying())
             {
                 client.frame.setFocusableWindowState(false);

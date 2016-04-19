@@ -410,7 +410,7 @@ class Game
         {
             if (this.choice == 3 || opponent.choice == 3)
             {
-                    return 0;
+                    return 3;
             }
             if (this.choice == 2)
             {
@@ -457,25 +457,37 @@ class Game
                 // The thread is only started after everyone connects.
                 output.println("MESSAGE All players connected");
                 
-                String choiceCommand = input.readLine();
+                
                 
                 while(ticTacToe)
                 {
+                    String choiceCommand = input.readLine();
+                    int num;
+                    
                     if (choiceCommand.startsWith("CHOICE"))
                     {
                         choice = Integer.parseInt(choiceCommand.substring(7));
                         //System.out.println(mark + " " + choice);
-                    }
+                        num = ticTacToe();
                     
-                    if (ticTacToe() == 1)
-                    {
-                        setCurrentPlayer(this);
-                        ticTacToe = false;
-                    }
-                    else if (ticTacToe() == 2)
-                    {
-                        setCurrentPlayer(opponent);
-                        ticTacToe = false;
+                        if (num == 1)
+                        {
+                            setCurrentPlayer(this);
+                            ticTacToe = false;
+                        }
+                        else if (num == 2)
+                        {
+                            setCurrentPlayer(opponent);
+                            ticTacToe = false;
+                        }
+                        else if (num == 0)
+                        {
+                            //System.out.println(num);
+                            choice = 3;
+                            opponent.choice = 3;
+                            output.println("CHOICE");
+                            opponent.output.println("CHOICE");
+                        }
                     }
                                    
                 }
@@ -484,6 +496,7 @@ class Game
                 if (mark == currentPlayer.mark)
                 {
                     output.println("MESSAGE Your move");
+                    opponent.output.println("MESSAGE opponent's move");
                 }
 
                 // Get commands from the client and process them.
