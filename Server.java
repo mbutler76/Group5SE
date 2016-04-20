@@ -21,7 +21,6 @@ public class Server
                 Game.Player playerO = game.new Player(listener.accept(), 'O');
                 playerX.setOpponent(playerO);
                 playerO.setOpponent(playerX);
-                game.currentPlayer = playerX;
                 playerX.start();
                 playerO.start();
             }
@@ -114,6 +113,7 @@ class Game
             currentPlayer.otherPlayerMoved(location);
             this.changePlayable(this.getDestBoard(location));
             //System.out.println("Dest board is " + this.getDestBoard(location));
+            //System.out.println("boo");
             return true;
         }
         return false;
@@ -137,7 +137,8 @@ class Game
                     else
                         sBoards[i].setPlayable(true);
                 }
-            }            
+            }
+            //System.out.println("boo");       
         }
     
     public int getBoardNumber(int num)
@@ -444,66 +445,62 @@ class Game
         
         public void otherPlayerMoved(int location)
         {
-            output.println("OPPONENT_MOVED " + location);            
+            output.println("OPPONENT_MOVED " + location);
             output.println(bigHasWinner() ? "DEFEAT" : boardFilledUp() ? "TIE" : "");
+            //System.out.println("boo");
         }
         
         public void run()
-        {
-            boolean ticTacToe = true;
-                       
+        {                      
             try
             {
                 // The thread is only started after everyone connects.
                 output.println("MESSAGE All players connected");
                 
+                int num;
                 
-                
-                while(ticTacToe)
-                {
-                    String choiceCommand = input.readLine();
-                    int num;
-                    
-                    if (choiceCommand.startsWith("CHOICE"))
-                    {
-                        choice = Integer.parseInt(choiceCommand.substring(7));
-                        //System.out.println(mark + " " + choice);
-                        num = ticTacToe();
-                    
-                        if (num == 1)
-                        {
-                            setCurrentPlayer(this);
-                            ticTacToe = false;
-                        }
-                        else if (num == 2)
-                        {
-                            setCurrentPlayer(opponent);
-                            ticTacToe = false;
-                        }
-                        else if (num == 0)
-                        {
-                            //System.out.println(num);
-                            choice = 3;
-                            opponent.choice = 3;
-                            output.println("CHOICE");
-                            opponent.output.println("CHOICE");
-                        }
-                    }
-                                   
-                }
-
-                // Tell the first player that it is their turn.
-                if (mark == currentPlayer.mark)
-                {
-                    output.println("MESSAGE Your move");
-                    opponent.output.println("MESSAGE opponent's move");
-                }
-
                 // Get commands from the client and process them.
                 while (true)
                 {
                     String command = input.readLine();
-                    if (command.startsWith("MOVE"))
+                    System.out.println(command);
+                    
+                    if (command.startsWith("CHOICE"))
+                    {
+                        choice = Integer.parseInt(command.substring(7));
+                        //System.out.println(mark + " " + choice);
+                        
+                        if (opponent.choice == 3)
+                        {
+                            output.println("MESSAGE waiting for opponent");
+                        }
+                        else
+                        {
+                            num = ticTacToe();
+                            if (num == 1)
+                            {
+                                setCurrentPlayer(this);
+                                output.println("MESSAGE Your move");
+                                opponent.output.println("MESSAGE opponent's move");
+                            }
+                            else if (num == 2)
+                            {
+                                setCurrentPlayer(opponent);
+                                output.println("MESSAGE opponent's move");
+                                opponent.output.println("MESSAGE your move");
+                            }
+                            else if (num == 0)
+                            {
+                                //System.out.println(num);
+                                choice = 3;
+                                opponent.choice = 3;
+                                output.println("CHOICE");
+                                opponent.output.println("CHOICE");
+                            }
+                        }
+                    }
+                    
+                    else if (command.startsWith("MOVE"))
                     {
                         int location = Integer.parseInt(command.substring(5));
                         //System.out.println("board number " + this.getBoardNumber(location));
@@ -516,6 +513,7 @@ class Game
                             output.println("MESSAGE dont be dumb");
                         }
                     }
+                    
                     else if (command.startsWith("QUIT"))
                     {
                         return;
