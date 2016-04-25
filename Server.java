@@ -5,6 +5,11 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.ResultSet;
 
 public class Server
 {
@@ -12,6 +17,7 @@ public class Server
     {
         ServerSocket listener = new ServerSocket(8901);
         System.out.println("Tic Tac Toe Server is Running");
+
         try
         {
             while (true)
@@ -388,6 +394,10 @@ class Game
         PrintWriter output;
         int choice = 3;
 
+        String url = "jdbc:mysql://localhost:3306/javabase";
+        String dbUsername = "java";
+        String dbPassword = "password";
+
         
         public Player(Socket socket, char mark)
         {
@@ -397,8 +407,75 @@ class Game
             {
                 input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 output = new PrintWriter(socket.getOutputStream(), true);
-                String username = input.readLine();
-                String password = input.readLine();
+                
+                boolean existing = Boolean.parseBoolean(input.readLine());
+                System.out.println(existing);
+                String forMatchPass = "trash";
+                String password = "garbage";
+
+                //login validation
+                if (existing){
+                    while(true){
+                        String email = input.readLine();
+                        System.out.println(email); /*DELETE LATER*/
+                        password = input.readLine();
+                        System.out.println(password); /*DELETE LATER*/
+
+
+                        System.out.println("Connecting database...");
+
+                        try {
+                            Connection connection = DriverManager.getConnection(url, dbUsername, dbPassword);
+                            Statement statement = connection.createStatement();
+
+                            String sql = "SELECT password FROM user WHERE email = '"+email+"'";
+
+                            ResultSet results = statement.executeQuery(sql);
+                            if(results.next()){
+                                forMatchPass = results.getString("password"); 
+                                System.out.println("incPass= " + forMatchPass); /* DEFINITELY DELETE LATER*/
+                            }     
+
+                            System.out.println("Database connected!");
+                        } catch (SQLException e) {
+                            throw new IllegalStateException("Cannot connect the database!", e);
+                        }
+                        
+                        if(forMatchPass.equals(password)){
+                            output.println("match");
+                            break;
+                        }
+                        else
+                            output.println("noMatch");
+                    }
+                }
+
+                else{
+                    String email = input.readLine();
+                    System.out.println(email); /*DELETE LATER*/
+                    String username = input.readLine();
+                    System.out.println(username); /*DELETE LATER*/
+                    password = input.readLine();
+                    System.out.println(password); /*DELETE LATER*/
+
+                    System.out.println("Connecting database...");
+
+                    try {
+                        Connection connection = DriverManager.getConnection(url, dbUsername, dbPassword);
+                        Statement statement = connection.createStatement();
+
+                        String sql = "insert into user "
+                                    + "(email, password, username, exp, level, record, avatar)"
+                                    + "values ('"+email+"', '"+password+"', '"+username+"', 0, 0, '000/000/000', 0)";
+
+                        statement.executeUpdate(sql);
+
+                        System.out.println("Database connected!");
+                    } catch (SQLException e) {
+                        throw new IllegalStateException("Cannot connect the database!", e);
+                    }
+                }
+
                 output.println("WELCOME " + mark);
                 output.println("MESSAGE Waiting for opponent to connect");
             } catch (IOException e)

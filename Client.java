@@ -43,6 +43,16 @@ public class Client
     
     public Client(String serverAddress) throws Exception
     {
+        //attributes
+    /*    int id;
+        String email;
+        String pass;
+        String username;
+        int exp;
+        int level;
+        String record; */
+        //avatar
+        boolean existing = false;
 
         // Setup networking
         socket = new Socket(serverAddress, PORT);
@@ -79,44 +89,62 @@ public class Client
         	}
         }       
         exit.addActionListener(new exitAction());
-
-        
+  
         //Login
+        String name = null, password = null, password2 = null, email = null;
+        boolean match = false;
         int reply = JOptionPane.showConfirmDialog(null, "Do you have an account?", "Account?", JOptionPane.YES_NO_OPTION);
         if(reply == JOptionPane.YES_OPTION)
         {
-        	JLabel jUserName = new JLabel("User Name");
-            JTextField userName = new JTextField();
-            JLabel jPassword = new JLabel("Password");
-            JTextField password = new JPasswordField();
-            Object[] ob = {jUserName, userName, jPassword, password};
-            int result = JOptionPane.showConfirmDialog(null, ob, "Login", JOptionPane.OK_CANCEL_OPTION);
-     
-            if (result == JOptionPane.OK_OPTION) {
-                String userNameValue = userName.getText();
-                out.println(userNameValue);
-                String passwordValue = password.getText();
-                out.println(passwordValue);
-            }
+            existing = true;
+            out.println(existing);
+            
+            while(true){
+            	JLabel jEmail = new JLabel("E-mail");
+                JTextField emailAddr = new JTextField();
+                JLabel jPassword = new JLabel("Password");
+                JTextField pw = new JPasswordField();
+                Object[] ob = {jEmail, emailAddr, jPassword, pw};
+                int result = JOptionPane.showConfirmDialog(null, ob, "Login", JOptionPane.OK_CANCEL_OPTION);
+         
+                if (result == JOptionPane.OK_OPTION) {
+                    email = emailAddr.getText();
+                    password = pw.getText();
+                    out.println(email);
+                    out.println(password);
+                }
+
+                String check = in.readLine();
+                System.out.println(check);
+                if (check.equals("match")){
+                    System.out.println("visib");
+                    break;
+                }
+                else
+                    JOptionPane.showMessageDialog(null, "Passwords did not match, please try again");
+            }          
+            out.flush();
         }
         else
         {
-        	String name = null, password = null, password2 = null;
-        	boolean match = false;
+            out.println(existing);
         	while (!match)
         	{
+            JLabel jEmail = new JLabel("E-mail");
+            JTextField emailAddr = new JTextField();
         	JLabel jUserName = new JLabel("User Name");
             JTextField userName = new JTextField();
             JLabel jPassword = new JLabel("Password");
             JTextField pw = new JPasswordField();
             JLabel jPassword2 = new JLabel("Please confirm password");
             JTextField pw2 = new JPasswordField();
-            Object[] ob = {jUserName, userName, jPassword, pw, jPassword2, pw2};
+            Object[] ob = {jEmail, emailAddr, jUserName, userName, jPassword, pw, jPassword2, pw2};
             int result = JOptionPane.showConfirmDialog(null, ob, "Create Account", JOptionPane.OK_CANCEL_OPTION);
         		
             	if (result == JOptionPane.OK_OPTION) 
         		{
-        			name = userName.getText();
+        			email = emailAddr.getText();
+                    name = userName.getText();
         			password = pw.getText();
         			password2 = pw2.getText();
         		}
@@ -126,6 +154,7 @@ public class Client
         		else
         			JOptionPane.showMessageDialog(null, "Passwords did not match, please try again");
         	}
+            out.println(email);
         	out.println(name);
         	out.println(password);
         	out.flush();
@@ -268,16 +297,19 @@ public class Client
                 else if (response.startsWith("VICTORY"))
                 {
                     messageLabel.setText("You win");
+                    //add SQL update for records
                     break;
                 }
                 else if (response.startsWith("DEFEAT"))
                 {
                     messageLabel.setText("You lose");
+                    //add SQL update for record
                     break;
                 }
                 else if (response.startsWith("TIE"))
                 {
                     messageLabel.setText("You tied");
+                    //add SQL update for records
                     break;
                 }
                 else if (response.startsWith("MESSAGE"))
