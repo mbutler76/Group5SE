@@ -97,7 +97,7 @@ public class Client
         if(reply == JOptionPane.YES_OPTION)
         {
             existing = true;
-            out.println(existing);
+            //out.println(existing); //REMOVE LATER
             
             while(true){
             	JLabel jEmail = new JLabel("E-mail");
@@ -357,7 +357,7 @@ public class Client
         int num = 0;
         while (true)
         {
-            String serverAddress = (args.length == 0) ? "localhost" : args[0];
+            String serverAddress = "169.254.67.132";
             Client client = new Client(serverAddress);
             client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             client.frame.setSize(600, 400);
