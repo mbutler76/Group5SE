@@ -357,7 +357,7 @@ public class Client
         int num = 0;
         while (true)
         {
-            String serverAddress = "72.221.62.219";
+            String serverAddress = "72.204.59.209";
             Client client = new Client(serverAddress);
             client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             client.frame.setSize(600, 400);
