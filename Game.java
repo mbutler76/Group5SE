@@ -560,7 +560,7 @@ public class Game
                             output.println(bigHasWinner() ? "VICTORY" : boardFilledUp() ? "TIE" : "");
                         } else
                         {
-                            output.println("MESSAGE dont be dumb");
+                            output.println("MESSAGE Invalid Move");
                         }
                     }
                     

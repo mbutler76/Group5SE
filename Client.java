@@ -66,6 +66,8 @@ public class Client
         file.add(newGame);
         JMenuItem tutorial = new JMenuItem("Tutorial");
         file.add(tutorial);
+        JMenuItem stats = new JMenuItem("Statistics");
+        file.add(stats);
         JMenuItem exit = new JMenuItem("Exit");
         file.add(exit);
         
@@ -108,6 +110,13 @@ public class Client
         	}
         }       
         tutorial.addActionListener(new tutorialAction());
+        
+        class statsAction implements ActionListener {
+        	public void actionPerformed (ActionEvent e) {
+        		JOptionPane.showMessageDialog(null, "Stats");
+        	}
+        } 
+        stats.addActionListener(new statsAction());
         
         class exitAction implements ActionListener {
         	public void actionPerformed (ActionEvent e) {
