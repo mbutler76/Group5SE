@@ -540,6 +540,34 @@ public class Game
                                     statement.executeUpdate(sql);
 
 
+                                    ////////
+
+                                    sql = "SELECT exp FROM user WHERE email = '"+email+"'";
+                                 //   System.out.println("SELECT record FROM user WHERE email = '"+email+"'");
+                                   // System.out.println("select works okay");
+                                    //System.out.println("email: " + email);
+
+                                    String exp = null;
+
+                                    results = statement.executeQuery(sql);
+                                    if(results.next()){
+                                        exp = results.getString("exp"); 
+                                        System.out.println("exp= " + exp); /* DEFINITELY DELETE LATER*/
+                                    } 
+
+                                  // String record = results.getString("record");
+                                 //   System.out.println("record: " + record);
+                                    //String recordArray[] = record.split("/");
+                                    int loseExp = Integer.parseInt(exp);
+                                    loseExp+=15;
+
+                                    //String newRecord = winRecord +  "/" + recordArray[1] + "/" + recordArray[2];
+                                    System.out.println("newExp: " + loseExp);
+
+                                    sql = "UPDATE user SET exp='" + loseExp + "' WHERE email='" +email+"'";
+                                    statement.executeUpdate(sql);
+
+
                                     //statement = connection.createStatement();
 
                                  //   sql = "SELECT record FROM user WHERE email = '"+email+"'";
@@ -581,6 +609,34 @@ public class Game
                                     System.out.println("newRecord: " + newRecord);
 
                                     sql = "UPDATE user SET record='" + newRecord + "' WHERE email='" +email+"'";
+                                    statement.executeUpdate(sql);
+
+
+                                    ////////
+
+                                    sql = "SELECT exp FROM user WHERE email = '"+email+"'";
+                                 //   System.out.println("SELECT record FROM user WHERE email = '"+email+"'");
+                                   // System.out.println("select works okay");
+                                    //System.out.println("email: " + email);
+
+                                    String exp = null;
+
+                                    results = statement.executeQuery(sql);
+                                    if(results.next()){
+                                        exp = results.getString("exp"); 
+                                        System.out.println("exp= " + exp); /* DEFINITELY DELETE LATER*/
+                                    } 
+
+                                  // String record = results.getString("record");
+                                 //   System.out.println("record: " + record);
+                                    //String recordArray[] = record.split("/");
+                                    int tieExp = Integer.parseInt(exp);
+                                    tieExp+=25;
+
+                                    //String newRecord = winRecord +  "/" + recordArray[1] + "/" + recordArray[2];
+                                    System.out.println("newExp: " + tieExp);
+
+                                    sql = "UPDATE user SET exp='" + tieExp + "' WHERE email='" +email+"'";
                                     statement.executeUpdate(sql);
 
 
@@ -690,6 +746,34 @@ public class Game
                                     System.out.println("newRecord: " + newRecord);
 
                                     sql = "UPDATE user SET record='" + newRecord + "' WHERE email='" +email+"'";
+                                    statement.executeUpdate(sql);
+
+
+                                    ////////
+
+                                    sql = "SELECT exp FROM user WHERE email = '"+email+"'";
+                                 //   System.out.println("SELECT record FROM user WHERE email = '"+email+"'");
+                                   // System.out.println("select works okay");
+                                    //System.out.println("email: " + email);
+
+                                    String exp = null;
+
+                                    results = statement.executeQuery(sql);
+                                    if(results.next()){
+                                        exp = results.getString("exp"); 
+                                        System.out.println("exp= " + exp); /* DEFINITELY DELETE LATER*/
+                                    } 
+
+                                  // String record = results.getString("record");
+                                 //   System.out.println("record: " + record);
+                                    //String recordArray[] = record.split("/");
+                                    int winExp = Integer.parseInt(exp);
+                                    winExp+=50;
+
+                                    //String newRecord = winRecord +  "/" + recordArray[1] + "/" + recordArray[2];
+                                    System.out.println("newExp: " + winExp);
+
+                                    sql = "UPDATE user SET exp='" + winExp + "' WHERE email='" +email+"'";
                                     statement.executeUpdate(sql);
 
 
