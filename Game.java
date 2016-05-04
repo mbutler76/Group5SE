@@ -370,6 +370,7 @@ public class Game
         String url = "jdbc:mysql://localhost:3306/javabase";
         String dbUsername = "java";
         String dbPassword = "password";
+        String email;
 
         
         public Player(Socket socket, char mark)
@@ -389,12 +390,13 @@ public class Game
                 //login validation
                 if (existing){
                     while(true){
-                        String email = input.readLine();
+                       // String email = input.readLine();
+                        email = input.readLine();
                         System.out.println(email); /*DELETE LATER*/
                         password = input.readLine();
                         System.out.println(password); /*DELETE LATER*/
 
-
+                 //       System.out.println("SELECT record FROM user WHERE email = '"+email+"'");
                         System.out.println("Connecting database...");
 
                         try {
@@ -424,7 +426,8 @@ public class Game
                 }
 
                 else{
-                    String email = input.readLine();
+                    //String 
+                    email = input.readLine();
                     System.out.println(email); /*DELETE LATER*/
                     String username = input.readLine();
                     System.out.println(username); /*DELETE LATER*/
@@ -498,6 +501,97 @@ public class Game
             output.println("OPPONENT_MOVED " + location);
             output.println(bigHasWinner() ? "DEFEAT" : boardFilledUp() ? "TIE" : "");
             //System.out.println("boo");
+            ///
+            if(bigHasWinner()){
+                //update losses 
+                System.out.println("Connecting database... losses?");
+
+                     try {
+                                    Connection connection = DriverManager.getConnection(url, dbUsername, dbPassword);
+                                    Statement statement = connection.createStatement();
+
+                                    
+                                    String sql = "SELECT record FROM user WHERE email = '"+email+"'";
+                                 //   System.out.println("SELECT record FROM user WHERE email = '"+email+"'");
+                                   // System.out.println("select works okay");
+                                    System.out.println("email: " + email);
+
+                                    String record = null;
+
+                                    ResultSet results = statement.executeQuery(sql);
+                                    if(results.next()){
+                                        record = results.getString("record"); 
+                                        System.out.println("record= " + record); /* DEFINITELY DELETE LATER*/
+                                    } 
+
+                                  // String record = results.getString("record");
+                                 //   System.out.println("record: " + record);
+                                    String recordArray[] = record.split("/");
+                                    int lossRecord = Integer.parseInt(recordArray[1]);
+                                    lossRecord++;
+
+                                    String newRecord = recordArray[0] +  "/" + lossRecord + "/" + recordArray[2];
+                                    System.out.println("newRecord: " + newRecord);
+
+                                    sql = "UPDATE user SET record='" + newRecord + "' WHERE email='" +email+"'";
+                                    statement.executeUpdate(sql);
+
+
+                                    //statement = connection.createStatement();
+
+                                 //   sql = "SELECT record FROM user WHERE email = '"+email+"'";
+
+                                    System.out.println("Database connected!");
+                        } catch (SQLException e) {
+                                    throw new IllegalStateException("Cannot connect the database!", e);
+                                }
+            }
+
+            else if (boardFilledUp()){
+                //update ties
+                System.out.println("Connecting database... ties");
+
+                     try {
+                                     Connection connection = DriverManager.getConnection(url, dbUsername, dbPassword);
+                                    Statement statement = connection.createStatement();
+
+                                    String sql = "SELECT record FROM user WHERE email = '"+email+"'";
+                                 //   System.out.println("SELECT record FROM user WHERE email = '"+email+"'");
+                                   // System.out.println("select works okay");
+                                    System.out.println("email: " + email);
+
+                                    String record = null;
+
+                                    ResultSet results = statement.executeQuery(sql);
+                                    if(results.next()){
+                                        record = results.getString("record"); 
+                                        System.out.println("record= " + record); /* DEFINITELY DELETE LATER*/
+                                    } 
+
+                                  // String record = results.getString("record");
+                                 //   System.out.println("record: " + record);
+                                    String recordArray[] = record.split("/");
+                                    int tieRecord = Integer.parseInt(recordArray[2]);
+                                    tieRecord++;
+
+                                    String newRecord = recordArray[0] +  "/" + recordArray[1] + "/" + tieRecord;
+                                    System.out.println("newRecord: " + newRecord);
+
+                                    sql = "UPDATE user SET record='" + newRecord + "' WHERE email='" +email+"'";
+                                    statement.executeUpdate(sql);
+
+
+                                    //statement = connection.createStatement();
+
+                                 //   sql = "SELECT record FROM user WHERE email = '"+email+"'";
+
+                                    System.out.println("Database connected!");
+                                } catch (SQLException e) {
+                                    throw new IllegalStateException("Cannot connect the database!", e);
+                                }
+
+            }
+            ///
         }
         
         public void run()
@@ -558,11 +652,108 @@ public class Game
                         {
                             output.println("VALID_MOVE");
                             output.println(bigHasWinner() ? "VICTORY" : boardFilledUp() ? "TIE" : "");
+
+                            if(bigHasWinner()){
+                                //increment wins
+                                System.out.println("email: " + email);
+                                System.out.println("FUK");
+                                System.out.println("Connecting wins database...");
+
+                                try {
+                                    Connection connection = DriverManager.getConnection(url, dbUsername, dbPassword);
+                                    Statement statement = connection.createStatement();
+
+                                    
+                                    String sql = "SELECT record FROM user WHERE email = '"+email+"'";
+                                 //   System.out.println("SELECT record FROM user WHERE email = '"+email+"'");
+                                   // System.out.println("select works okay");
+                                    System.out.println("email: " + email);
+
+                                    String record = null;
+
+                                    ResultSet results = statement.executeQuery(sql);
+                                    if(results.next()){
+                                        record = results.getString("record"); 
+                                        System.out.println("record= " + record); /* DEFINITELY DELETE LATER*/
+                                    } 
+
+                                  // String record = results.getString("record");
+                                 //   System.out.println("record: " + record);
+                                    String recordArray[] = record.split("/");
+                                    int winRecord = Integer.parseInt(recordArray[0]);
+                                    winRecord++;
+
+                                    String newRecord = winRecord +  "/" + recordArray[1] + "/" + recordArray[2];
+                                    System.out.println("newRecord: " + newRecord);
+
+                                    sql = "UPDATE user SET record='" + newRecord + "' WHERE email='" +email+"'";
+                                    statement.executeUpdate(sql);
+
+
+                                    //statement = connection.createStatement();
+
+                                 //   sql = "SELECT record FROM user WHERE email = '"+email+"'";
+
+                                    System.out.println("Database connected!");
+                                } catch (SQLException e) {
+                                    throw new IllegalStateException("Cannot connect the database!", e);
+                                }
+
+
+                            }
                         } else
                         {
                             output.println("MESSAGE Invalid Move");
                         }
                     }
+
+                    else if(command.startsWith("STATS")){
+                         System.out.println("Connecting stats database...");
+
+                                try {
+
+                                   
+                                    Connection connection = DriverManager.getConnection(url, dbUsername, dbPassword);
+                                    Statement statement = connection.createStatement();
+
+                                    String sql1 = "SELECT record FROM user WHERE email = '"+email+"'";
+                                 //   System.out.println("SELECT record FROM user WHERE email = '"+email+"'");
+                                   // System.out.println("select works okay");
+                                    System.out.println("email: " + email);
+
+                                    String record = null;
+
+                                    ResultSet results = statement.executeQuery(sql1);
+                                    if(results.next()){
+                                        record = results.getString("record"); 
+                                        System.out.println("record= " + record); /* DEFINITELY DELETE LATER*/
+                                    } 
+
+                                    String sql2 = "SELECT exp FROM user WHERE email = '"+email+"'";
+                                 //   System.out.println("SELECT record FROM user WHERE email = '"+email+"'");
+                                   // System.out.println("select works okay");
+                                    System.out.println("email: " + email);
+
+                                    String exp = null;
+
+                                    ResultSet results2 = statement.executeQuery(sql2);
+                                    if(results2.next()){
+                                        exp = results2.getString("exp"); 
+                                        System.out.println("exp= " + exp); /* DEFINITELY DELETE LATER*/
+                                    } 
+
+                                  // String record = results.getString("record");
+                                 //   System.out.println("record: " + record);
+                                  
+
+                        System.out.println("STATS " + record + "/" + exp);
+                        output.println("STATS " + record + "/" + exp);
+
+                        System.out.println("Database connected!");
+                                } catch (SQLException e) {
+                                    throw new IllegalStateException("Cannot connect the database!", e);
+                                }
+                    }                    
                     
                     else if (command.startsWith("QUIT"))
                     {
