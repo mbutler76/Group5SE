@@ -277,7 +277,7 @@ public class Client
     {
         JFrame ticTacToeFrame = new JFrame("Rock Paper Scisors");
         ticTacToeFrame.setResizable(false);
-        ticTacToeFrame.setSize(200, 100);
+        ticTacToeFrame.setSize(200, 120);
         ticTacToeFrame.setAlwaysOnTop(true);
         ImageIcon rock = new ImageIcon("rock.png");
         ImageIcon paper = new ImageIcon("paper.png");
