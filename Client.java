@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -113,7 +114,24 @@ public class Client
         
         class statsAction implements ActionListener {
         	public void actionPerformed (ActionEvent e) {
-        		JOptionPane.showMessageDialog(null, "Stats");
+        		out.println("STATS");
+//        		try {
+//        			String response = in.readLine();
+////					if (response.startsWith("STATS"))
+////					{
+////						String wins = response.substring(6, 8);
+////						String losses = response.substring(9, 11);
+////						String ties = response.substring(12, 14);
+////						String exp = response.substring(15);
+////						JOptionPane.showMessageDialog(null, "WINS: " + wins + "\n" + 
+////															"LOSSES: " + losses + "\n" +
+////															"DRAWS: "  + ties + "\n" +
+////															"EXP: " + exp);
+////					}
+//				} catch (IOException e1) {
+//					e1.printStackTrace();
+//				}
+        		//JOptionPane.showMessageDialog(null, "Stats");
         	}
         } 
         stats.addActionListener(new statsAction());
@@ -349,10 +367,19 @@ public class Client
                 }
                 else if (response.startsWith("MESSAGE"))
                 {
-                    //System.out.println("boo");
                     messageLabel.setText(response.substring(8));
                 }
-                //System.out.println("boo");
+                else if (response.startsWith("STATS"))
+				{
+					String stats = response.substring(6);
+					String statsArray[] = stats.split("/");
+					int level = Integer.parseInt(statsArray[3])/100;
+					JOptionPane.showMessageDialog(null, "Wins: " + statsArray[0] + "\n" +  
+														"Loses: " + statsArray[1] + "\n" +
+														"Draws: " + statsArray[2] + "\n" +
+														"Experience: " + statsArray[3] + "\n" +
+														"Level: " + level);
+				}
             }
             out.println("QUIT");
         }
@@ -364,7 +391,7 @@ public class Client
 
     private boolean wantsToPlayAgain()
     {
-        int response = JOptionPane.showConfirmDialog(frame, "Want to play again?", " fun", JOptionPane.YES_NO_OPTION);
+        int response = JOptionPane.showConfirmDialog(frame, "Want to play again?", "Play Again?", JOptionPane.YES_NO_OPTION);
         frame.dispose();
         return response == JOptionPane.YES_OPTION;
     }
