@@ -226,8 +226,7 @@ public class Client
             board[i].addMouseListener(new MouseAdapter() {
                 public void mousePressed(MouseEvent e) {
                     currentSquare = board[j];
-                    out.println("MOVE " + j);
-                    System.out.println("MOVE " + j);}});
+                    out.println("MOVE " + j);}});
             smallBoardPanel.add(board[i]);
         }
         
@@ -241,32 +240,37 @@ public class Client
     {
     	for(int i = 0; i < 81; i ++)
     	{
-    		board[i].setBackground(Color.white);
+    		if(board[i].getBackground() != Color.blue && board[i].getBackground() != Color.red)
+    		{board[i].setBackground(Color.white);}
     	}
     	 for(int i = 3; i < 6; i++)
          {
-             board[i].setBackground(Color.gray);
+             if(board[i].getBackground() != Color.blue && board[i].getBackground() != Color.red)
+             {board[i].setBackground(Color.gray);
              board[i+9].setBackground(Color.gray);
-             board[i+18].setBackground(Color.gray);
+             board[i+18].setBackground(Color.gray);}
          }
          for(int i = 27; i < 30; i++)
          {
-             board[i].setBackground(Color.gray);
+             if(board[i].getBackground() != Color.blue && board[i].getBackground() != Color.red)
+             {board[i].setBackground(Color.gray);
              board[i+9].setBackground(Color.gray);
-             board[i+18].setBackground(Color.gray);
+             board[i+18].setBackground(Color.gray);}
          }
          for(int i = 33; i < 36; i++)
          {
-             board[i].setBackground(Color.gray);
+             if(board[i].getBackground() != Color.blue && board[i].getBackground() != Color.red)
+             {board[i].setBackground(Color.gray);
              board[i+9].setBackground(Color.gray);
-             board[i+18].setBackground(Color.gray);
+             board[i+18].setBackground(Color.gray);}
          }
           for(int i = 57; i < 60; i++)
           {
-             board[i].setBackground(Color.gray);
+             if(board[i].getBackground() != Color.blue && board[i].getBackground() != Color.red)
+             {board[i].setBackground(Color.gray);
              board[i+9].setBackground(Color.gray);
-             board[i+18].setBackground(Color.gray);
-         }
+             board[i+18].setBackground(Color.gray);}
+          }
     }
     
     public void rockPaperScissors()
@@ -327,6 +331,7 @@ public class Client
             while (true)
             {
                 response = in.readLine();
+               	System.out.println(response);
                 if (response.startsWith("CHOICE"))
                 {
                     messageLabel.setText("rock paper scissors was a tie please play again");
@@ -380,6 +385,104 @@ public class Client
 														"Experience: " + statsArray[3] + "\n" +
 														"Level: " + level);
 				}
+               else if (response.startsWith("SBOARD_WON"))
+               {
+               	int boardNumber = Integer.parseInt(response.substring(11, 12));
+               	String mark = response.substring(12);
+               	System.out.println("boardNum = " + response.substring(11, 12));
+               	System.out.println("mark = " + mark);
+               	Color color;
+               	if ( mark.equals("X"))
+               	{
+               		color = Color.red;
+               	}
+               	else
+               	{
+               		color = Color.blue;
+               	}
+               	System.out.println(color.toString());
+               	if (boardNumber == 0)
+               	{
+		               	 for(int i = 0; i < 3; i++)
+		                 {
+		                     board[i].setBackground(color);
+		                     board[i+9].setBackground(color);
+		                     board[i+18].setBackground(color);
+		                 }
+               	}
+               	else if (boardNumber == 1)
+               	{
+	                	 for(int i = 3; i < 6; i++)
+	                     {
+	                         board[i].setBackground(color);
+	                         board[i+9].setBackground(color);
+	                         board[i+18].setBackground(color);
+	                     }
+               	}
+               	else if (boardNumber == 2)
+               	{
+	                	 for(int i = 6; i < 9; i++)
+	                     {
+	                         board[i].setBackground(color);
+	                         board[i+9].setBackground(color);
+	                         board[i+18].setBackground(color);
+	                     }
+               	}
+               	else if (boardNumber == 3)
+               	{
+	                     for(int i = 27; i < 30; i++)
+	                     {
+	                         board[i].setBackground(color);
+	                         board[i+9].setBackground(color);
+	                         board[i+18].setBackground(color);
+	                     }
+               	}
+               	else if (boardNumber == 4)
+               	{
+	                	 for(int i = 30; i < 33; i++)
+	                     {
+	                         board[i].setBackground(color);
+	                         board[i+9].setBackground(color);
+	                         board[i+18].setBackground(color);
+	                     }
+               	}
+               	else if (boardNumber == 5)
+               	{
+	                     for(int i = 33; i < 36; i++)
+	                     {
+	                         board[i].setBackground(color);
+	                         board[i+9].setBackground(color);
+	                         board[i+18].setBackground(color);
+	                     }
+               	}
+               	else if (boardNumber == 6)
+               	{
+	                	 for(int i = 54; i < 57; i++)
+	                     {
+	                         board[i].setBackground(color);
+	                         board[i+9].setBackground(color);
+	                         board[i+18].setBackground(color);
+	                     }
+               	}
+               	else if (boardNumber == 7)
+               	{
+	                      for(int i = 57; i < 60; i++)
+	                      {
+	                         board[i].setBackground(color);
+	                         board[i+9].setBackground(color);
+	                         board[i+18].setBackground(color);
+	                     }
+               	}
+               	else if (boardNumber == 8)
+               	{
+	                 	 for(int i = 60; i < 63; i++)
+	                     {
+	                         board[i].setBackground(color);
+	                         board[i+9].setBackground(color);
+	                         board[i+18].setBackground(color);
+	                     }
+               	}
+               }
             }
             out.println("QUIT");
         }
