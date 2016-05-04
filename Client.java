@@ -400,8 +400,20 @@ public class Client
                	{
                		color = Color.blue;
                	}
-               	System.out.println(color.toString());
-               	if (boardNumber == 0)
+                   colorSboard(boardNumber, color);
+               }
+            }
+            out.println("QUIT");
+        }
+        finally
+        {
+            socket.close();
+        }
+    }
+    
+    public void colorSboard(int boardNumber, Color color)
+    {
+        if (boardNumber == 0)
                	{
 		               	 for(int i = 0; i < 3; i++)
 		                 {
@@ -482,14 +494,6 @@ public class Client
 	                         board[i+18].setBackground(color);
 	                     }
                	}
-               }
-            }
-            out.println("QUIT");
-        }
-        finally
-        {
-            socket.close();
-        }
     }
 
     private boolean wantsToPlayAgain()
