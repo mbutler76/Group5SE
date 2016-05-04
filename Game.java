@@ -206,6 +206,9 @@ public class Game
         
         public void setBig(Player smallWinner)
         {
+            currentPlayer.output.println("SBOARD_WON " + boardNumber + smallWinner.mark);
+         //   System.out.println("small: " + smallWinner.mark);
+          //  System.out.println("player: " + Player.mark);
             if (boardNumber < 3)
             {
                 board[boardNumber * 3] = smallWinner; board[boardNumber * 3 + 1] = smallWinner; board[boardNumber * 3 + 2] = smallWinner;
