@@ -522,6 +522,9 @@ public class Client
         int num = 0;
         while (true)
         {
+           // SplashDemo test = new SplashDemo();
+            SplashScreen splash = new SplashScreen(5000);
+            splash.showSplash();
             String serverAddress = "70.178.92.117";
             Client client = new Client(serverAddress);
             client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -537,3 +540,5 @@ public class Client
         }
     }
 }
+
+
